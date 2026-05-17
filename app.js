@@ -1,15 +1,48 @@
 // ===== HELPER FUNCTIONS (used by data files) =====
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function cb(lang,code){return`<div class="code-block"><div class="code-header"><span>${lang}</span><button class="copy-btn">Copy</button></div><pre><code>${escHtml(code.trim())}</code></pre></div>`;}
-function tbl(rows){return`<div style="overflow-x:auto;margin:12px 0"><table style="width:100%;border-collapse:collapse;font-size:13px">${rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?'th':'td'} style="padding:8px 12px;border:1px solid var(--glass-border);${ri===0?'background:var(--accent3);font-weight:600;text-align:left':'text-align:left;color:var(--fg2)'}">${c}</${ri===0?'th':'td'}>`).join('')}</tr>`).join('')}</table></div>`;}
-function qz(q,opts,ci,ex){return`<div class="quiz"><div class="quiz-q">❓ ${q}</div><div class="quiz-opts">${opts.map((o,i)=>`<div class="quiz-opt" data-correct="${i===ci?1:0}">${o}</div>`).join('')}</div><div class="quiz-explain">${ex}</div></div>`;}
+function cb(lang,code){
+  return`<div class="terminal-block">
+    <div class="terminal-header">
+      <div class="mac-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="terminal-title">${lang}</div>
+      <button class="copy-btn">Copy</button>
+    </div>
+    <pre><code>${escHtml(code.trim()).replace(/^(\$|>|#) /gm, '<span class="prompt">$1 </span>')}</code><span class="cursor">_</span></pre>
+  </div>`;
+}
+function tbl(rows){return`<div style="overflow-x:auto;margin:16px 0"><table class="premium-table">${rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?'th':'td'}>${c}</${ri===0?'th':'td'}>`).join('')}</tr>`).join('')}</table></div>`;}
+function qz(q,opts,ci,ex){return`<div class="quiz"><div class="quiz-q">${q}</div><div class="quiz-opts">${opts.map((o,i)=>`<div class="quiz-opt" data-correct="${i===ci?1:0}">${o}</div>`).join('')}</div><div class="quiz-explain">${ex}</div></div>`;}
 function al(type,text){return`<div class="alert alert-${type}">${text}</div>`;}
-function fc(q,a){return`<div class="flashcard"><div class="flashcard-q">💡 ${q}</div><div class="flashcard-a">${a}</div><div class="flashcard-hint">Click to reveal</div></div>`;}
+function fc(q,a){return`<div class="flashcard"><div class="flashcard-q">${q}</div><div class="flashcard-a">${a}</div><div class="flashcard-hint">Click to reveal</div></div>`;}
 
 // ===== CORE ENGINE =====
 const $ = s=>document.querySelector(s);
 const $$ = s=>document.querySelectorAll(s);
 let allExpanded=false, techMode=false;
+
+// ===== SCROLL ANIMATIONS (INTERSECTION OBSERVER) =====
+function initScrollObserver(){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('reveal-visible');
+        
+        // ScrollSpy logic for sidebar
+        if(entry.target.classList.contains('module')){
+          $$('.nav-item').forEach(n => n.classList.remove('active'));
+          const id = entry.target.id;
+          const navItem = $(`.nav-item[onclick*="${id}"]`);
+          if(navItem) navItem.classList.add('active');
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: "0px 0px -10% 0px" });
+
+  $$('.module, .topic').forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+}
 
 // ===== DOT GRID =====
 function initDotGrid(){
@@ -367,6 +400,7 @@ function init(){
   $('#extrasContainer').innerHTML=renderExtras();
 
   updateProgress();
+  initScrollObserver();
 }
 
 document.addEventListener('DOMContentLoaded',init);
