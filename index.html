@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cybersecurity Internship Master Notebook — Deep Cyte Cyber Labs</title>
+<meta name="description" content="Interactive cybersecurity learning platform for interns at Deep Cyte Cyber Labs UK">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/*===== RESET & BASE =====*/
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
+--fg:#f0f0f0;--fg2:#aaa;--fg3:#666;
+--accent:#fff;--accent2:rgba(255,255,255,.12);--accent3:rgba(255,255,255,.06);
+--glass:rgba(255,255,255,.04);--glass-border:rgba(255,255,255,.08);
+--glow:rgba(255,255,255,.15);--glow2:rgba(255,255,255,.05);
+--radius:12px;--radius-lg:20px;
+--font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+--sidebar-w:280px;--header-h:64px;
+--transition:.3s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{
+--bg:#f5f5f7;--bg2:#fff;--bg3:#eee;--bg4:#e0e0e0;
+--fg:#1a1a1a;--fg2:#555;--fg3:#999;
+--accent:#000;--accent2:rgba(0,0,0,.08);--accent3:rgba(0,0,0,.04);
+--glass:rgba(0,0,0,.03);--glass-border:rgba(0,0,0,.08);
+--glow:rgba(0,0,0,.08);--glow2:rgba(0,0,0,.03);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.7;overflow-x:hidden;min-height:100vh}
+a{color:var(--fg);text-decoration:none}
+h1,h2,h3,h4,h5{font-weight:700;line-height:1.3}
+/*===== SCROLLBAR =====*/
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--fg3);border-radius:3px}
+/*===== DOTTED GRID BG =====*/
+#dotGrid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.3}
+/*===== SCROLL PROGRESS =====*/
+#scrollProgress{position:fixed;top:0;left:0;height:2px;background:var(--fg);z-index:10000;transition:width .1s linear;width:0}
+/*===== HEADER =====*/
+header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgba(10,10,10,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);z-index:1000;display:flex;align-items:center;padding:0 24px;gap:16px}
+[data-theme="light"] header{background:rgba(245,245,247,.85)}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.5px;white-space:nowrap}
+.logo span{opacity:.4;font-weight:400;font-size:13px;margin-left:8px}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+#searchBox{background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;padding:8px 14px;color:var(--fg);font-family:var(--font);font-size:13px;width:220px;outline:none;transition:var(--transition)}
+#searchBox:focus{border-color:var(--fg3);width:280px}
+#searchBox::placeholder{color:var(--fg3)}
+.btn-icon{background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fg2);transition:var(--transition);font-size:16px}
+.btn-icon:hover{background:var(--accent2);color:var(--fg)}
+#menuToggle{display:none}
+/*===== SIDEBAR =====*/
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--glass-border);overflow-y:auto;z-index:900;padding:16px 0;transition:transform var(--transition)}
+.nav-section{padding:0 16px;margin-bottom:8px}
+.nav-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--fg3);padding:8px 0;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:8px;font-size:13px;color:var(--fg2);cursor:pointer;transition:var(--transition);position:relative;margin:1px 0}
+.nav-item:hover{background:var(--accent2);color:var(--fg)}
+.nav-item.active{background:var(--accent2);color:var(--fg);font-weight:600}
+.nav-item .num{font-family:var(--mono);font-size:11px;color:var(--fg3);min-width:20px}
+.nav-item .prog{position:absolute;right:12px;font-size:10px;color:var(--fg3);font-family:var(--mono)}
+.nav-progress{height:2px;background:var(--accent3);border-radius:1px;margin:0 16px 12px;overflow:hidden}
+.nav-progress-bar{height:100%;background:var(--fg);width:0;transition:width .5s ease}
+/*===== MAIN =====*/
+#main{margin-left:var(--sidebar-w);margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:40px 48px 80px;max-width:960px;position:relative;z-index:1}
+/*===== HERO =====*/
+.hero{text-align:center;padding:60px 0 48px;position:relative}
+.hero h1{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:12px}
+.hero p{color:var(--fg2);font-size:15px;max-width:520px;margin:0 auto 32px}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-val{font-size:28px;font-weight:800;font-family:var(--mono)}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--fg3);margin-top:2px}
+/*===== MODULE CARD =====*/
+.module{background:var(--bg2);border:1px solid var(--glass-border);border-radius:var(--radius-lg);margin-bottom:24px;overflow:hidden;transition:var(--transition)}
+.module:hover{border-color:var(--fg3);box-shadow:0 8px 32px var(--glow2)}
+.module-header{padding:24px 28px;cursor:pointer;display:flex;align-items:center;gap:16px;user-select:none}
+.module-num{font-family:var(--mono);font-size:12px;color:var(--fg3);background:var(--accent3);padding:6px 10px;border-radius:6px;font-weight:600;min-width:40px;text-align:center}
+.module-title{font-size:18px;font-weight:700;flex:1}
+.module-meta{font-size:12px;color:var(--fg3);font-family:var(--mono)}
+.module-chevron{font-size:18px;color:var(--fg3);transition:transform var(--transition)}
+.module.open .module-chevron{transform:rotate(180deg)}
+.module-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.module.open .module-body{max-height:none}
+.module-content{padding:0 28px 28px}
+/*===== TOPIC =====*/
+.topic{border-top:1px solid var(--glass-border);padding:20px 0}
+.topic-title{font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;padding:4px 0}
+.topic-title .arrow{font-size:12px;color:var(--fg3);transition:transform var(--transition)}
+.topic.open .topic-title .arrow{transform:rotate(90deg)}
+.topic-body{display:none;padding:16px 0 8px}
+.topic.open .topic-body{display:block}
+.topic-body h4{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--fg3);margin:20px 0 8px;font-weight:600}
+.topic-body h4:first-child{margin-top:0}
+.topic-body p{font-size:14px;color:var(--fg2);margin-bottom:10px;line-height:1.8}
+.topic-body ul{padding-left:20px;margin-bottom:12px}
+.topic-body li{font-size:14px;color:var(--fg2);margin-bottom:4px}
+/*===== CODE BLOCK =====*/
+.code-block{position:relative;background:var(--bg);border:1px solid var(--glass-border);border-radius:8px;margin:12px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--accent3);border-bottom:1px solid var(--glass-border);font-size:11px;color:var(--fg3);font-family:var(--mono)}
+.copy-btn{background:none;border:1px solid var(--glass-border);border-radius:4px;padding:3px 10px;color:var(--fg3);cursor:pointer;font-size:11px;font-family:var(--mono);transition:var(--transition)}
+.copy-btn:hover{color:var(--fg);border-color:var(--fg3)}
+.code-block pre{padding:14px;font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:auto;color:var(--fg)}
+.code-block code{font-family:var(--mono)}
+/*===== INLINE CODE =====*/
+.topic-body code{background:var(--accent3);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:12px}
+/*===== FLASHCARD =====*/
+.flashcard{background:var(--bg3);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:12px 0;cursor:pointer;transition:var(--transition);position:relative;min-height:80px}
+.flashcard:hover{border-color:var(--fg3)}
+.flashcard-q{font-size:14px;font-weight:600}
+.flashcard-a{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);font-size:13px;color:var(--fg2)}
+.flashcard.revealed .flashcard-a{display:block}
+.flashcard-hint{position:absolute;bottom:8px;right:12px;font-size:10px;color:var(--fg3);font-family:var(--mono)}
+.flashcard.revealed .flashcard-hint{display:none}
+/*===== QUIZ =====*/
+.quiz{background:var(--bg3);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:12px 0}
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border:1px solid var(--glass-border);border-radius:8px;font-size:13px;cursor:pointer;transition:var(--transition)}
+.quiz-opt:hover{background:var(--accent2)}
+.quiz-opt.correct{border-color:#4a4;background:rgba(68,170,68,.1)}
+.quiz-opt.wrong{border-color:#a44;background:rgba(170,68,68,.1)}
+.quiz-explain{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);font-size:13px;color:var(--fg2)}
+/*===== CHECKLIST =====*/
+.checklist{background:var(--bg3);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:16px 0}
+.checklist h4{font-size:14px;font-weight:700;margin-bottom:12px}
+.check-item{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;color:var(--fg2);cursor:pointer}
+.check-item input{accent-color:var(--fg);cursor:pointer}
+.check-item.done{text-decoration:line-through;opacity:.5}
+/*===== PROGRESS CIRCLE =====*/
+.progress-ring{position:relative;width:80px;height:80px}
+.progress-ring svg{transform:rotate(-90deg)}
+.progress-ring circle{fill:none;stroke-width:4}
+.progress-ring .bg-ring{stroke:var(--accent3)}
+.progress-ring .fg-ring{stroke:var(--fg);stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.progress-ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:var(--mono)}
+/*===== TABS =====*/
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--glass-border);padding-bottom:0}
+.tab{padding:8px 16px;font-size:13px;color:var(--fg3);cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition);font-weight:500}
+.tab:hover{color:var(--fg)}
+.tab.active{color:var(--fg);border-color:var(--fg)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/*===== ROADMAP TIMELINE =====*/
+.timeline{position:relative;padding-left:28px;margin:20px 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:var(--glass-border)}
+.tl-item{position:relative;padding:0 0 24px;font-size:13px}
+.tl-item::before{content:'';position:absolute;left:-24px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--bg3);border:2px solid var(--fg3)}
+.tl-item.done::before{background:var(--fg);border-color:var(--fg)}
+.tl-item h5{font-size:14px;font-weight:600;margin-bottom:4px}
+.tl-item p{color:var(--fg2)}
+/*===== ALERT BOXES =====*/
+.alert{padding:14px 18px;border-radius:8px;font-size:13px;margin:12px 0;border-left:3px solid}
+.alert-info{background:rgba(100,150,255,.06);border-color:rgba(100,150,255,.3);color:var(--fg2)}
+.alert-warn{background:rgba(255,180,50,.06);border-color:rgba(255,180,50,.3);color:var(--fg2)}
+.alert-tip{background:rgba(100,200,100,.06);border-color:rgba(100,200,100,.3);color:var(--fg2)}
+/*===== SEARCH RESULTS =====*/
+#searchResults{position:fixed;top:var(--header-h);right:24px;width:360px;max-height:400px;background:var(--bg2);border:1px solid var(--glass-border);border-radius:var(--radius);overflow-y:auto;z-index:1100;display:none;box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.sr-item{padding:12px 16px;border-bottom:1px solid var(--glass-border);cursor:pointer;font-size:13px;transition:var(--transition)}
+.sr-item:hover{background:var(--accent2)}
+.sr-item strong{display:block;font-size:14px;margin-bottom:2px}
+.sr-item span{color:var(--fg3);font-size:12px}
+/*===== MODE TOGGLE (Beginner/Technical) =====*/
+.mode-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--fg3)}
+.toggle-switch{width:40px;height:22px;background:var(--accent3);border-radius:11px;position:relative;cursor:pointer;transition:var(--transition);border:1px solid var(--glass-border)}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--fg3);transition:var(--transition)}
+.toggle-switch.on{background:var(--accent2)}
+.toggle-switch.on::after{left:20px;background:var(--fg)}
+/*===== FOOTER =====*/
+footer{margin-left:var(--sidebar-w);padding:32px 48px;border-top:1px solid var(--glass-border);text-align:center;font-size:12px;color:var(--fg3);position:relative;z-index:1}
+/*===== PRINT MODE =====*/
+@media print{
+  header,#sidebar,#scrollProgress,#dotGrid,.btn-icon,#searchBox,.module-chevron,.copy-btn{display:none!important}
+  #main{margin:0!important;padding:20px!important;max-width:100%!important}
+  .module{break-inside:avoid;border:1px solid #ddd!important;margin-bottom:16px}
+  .module-body{max-height:none!important}
+  .topic-body{display:block!important}
+  body{background:#fff!important;color:#000!important}
+}
+/*===== RESPONSIVE =====*/
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0;padding:24px 20px 60px}
+  footer{margin-left:0;padding:24px 20px}
+  #menuToggle{display:flex}
+  .hero h1{font-size:28px}
+  #searchBox{width:140px}
+  #searchBox:focus{width:200px}
+}
+@media(max-width:480px){
+  .header-actions{gap:6px}
+  #searchBox{width:100px;font-size:12px}
+  .hero-stats{gap:20px}
+  .module-header{padding:16px 18px}
+  .module-content{padding:0 18px 18px}
+}
+/*===== ANIMATIONS =====*/
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.6}}
+.fade-up{animation:fadeUp .5s ease both}
+.module{animation:fadeUp .4s ease both}
+.module:nth-child(2){animation-delay:.05s}
+.module:nth-child(3){animation-delay:.1s}
+.module:nth-child(4){animation-delay:.15s}
+/*===== KEYBOARD SHORTCUT HINT =====*/
+.kbd{display:inline-block;padding:2px 6px;background:var(--accent3);border:1px solid var(--glass-border);border-radius:4px;font-size:10px;font-family:var(--mono);color:var(--fg3);margin:0 2px}
+</style>
+</head>
+<body>
+<!-- Scroll Progress -->
+<div id="scrollProgress"></div>
+<!-- Dot Grid Background -->
+<canvas id="dotGrid"></canvas>
+<!-- Header -->
+<header>
+  <div class="btn-icon" id="menuToggle">☰</div>
+  <div class="logo">CyberNotebook<span>Deep Cyte Labs</span></div>
+  <div class="header-actions">
+    <input type="text" id="searchBox" placeholder="Search... (Ctrl+K)">
+    <div class="mode-toggle"><span>Beginner</span><div class="toggle-switch" id="modeToggle" title="Toggle Technical Mode"></div><span>Technical</span></div>
+    <div class="btn-icon" id="themeToggle" title="Toggle Light/Dark">◐</div>
+    <div class="btn-icon" id="expandAll" title="Expand All">⊞</div>
+    <div class="btn-icon" id="printBtn" title="Print / PDF">⎙</div>
+  </div>
+</header>
+<div id="searchResults"></div>
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-title">Progress</div>
+    <div class="nav-progress"><div class="nav-progress-bar" id="navProgressBar"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Modules</div>
+    <div id="navItems"></div>
+  </div>
+  <div class="nav-section" style="margin-top:16px">
+    <div class="nav-section-title">Resources</div>
+    <div class="nav-item" onclick="scrollToEl('roadmap')">📅 60-Day Roadmap</div>
+    <div class="nav-item" onclick="scrollToEl('labsetup')">🔧 Lab Setup Guide</div>
+    <div class="nav-item" onclick="scrollToEl('cheatsheets')">📋 Cheat Sheets</div>
+    <div class="nav-item" onclick="scrollToEl('interview')">💼 Interview Prep</div>
+    <div class="nav-item" onclick="scrollToEl('resources')">📚 Free Resources</div>
+  </div>
+  <div class="nav-section" style="margin-top:16px;padding:0 16px">
+    <div class="checklist" style="background:var(--bg);border:1px solid var(--glass-border)">
+      <h4>📝 Daily Checklist</h4>
+      <div id="dailyChecklist"></div>
+    </div>
+  </div>
+</nav>
+<!-- Main Content -->
+<main id="main">
+  <div class="hero">
+    <h1>Cybersecurity Internship<br>Master Notebook</h1>
+    <p>A comprehensive interactive guide for your journey at Deep Cyte Cyber Labs UK. From beginner to internship-ready.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val" id="statModules">11</div><div class="stat-label">Modules</div></div>
+      <div class="stat"><div class="stat-val" id="statTopics">90+</div><div class="stat-label">Topics</div></div>
+      <div class="stat"><div class="stat-val" id="statLabs">40+</div><div class="stat-label">Labs</div></div>
+      <div class="stat"><div class="stat-val" id="statDays">60</div><div class="stat-label">Day Roadmap</div></div>
+    </div>
+  </div>
+  <div id="moduleContainer"></div>
+  <div id="extrasContainer"></div>
+</main>
+<footer>
+  <p>Cybersecurity Internship Master Notebook — Deep Cyte Cyber Labs UK © 2026</p>
+  <p style="margin-top:4px">Keyboard: <span class="kbd">Ctrl+K</span> Search &nbsp; <span class="kbd">Ctrl+E</span> Expand All &nbsp; <span class="kbd">Ctrl+D</span> Dark/Light</p>
+</footer>
+<!-- Load helpers + app engine first, then all data modules -->
+<script src="app.js"></script>
+<script src="data-m1.js"></script>
+<script src="data-m2.js"></script>
+<script src="data-m3.js"></script>
+<script src="data-m4.js"></script>
+<script src="data-m5.js"></script>
+<script src="data-m6-m7.js"></script>
+<script src="data-m8-m9.js"></script>
+<script src="data-m10-m11.js"></script>
+<script src="data-extras.js"></script>
+</body>
+</html>
