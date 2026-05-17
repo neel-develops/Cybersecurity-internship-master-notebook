@@ -1,7 +1,4 @@
 # Cybersecurity Internship Master Notebook
-### Deep Cyte Cyber Labs UK | Beginner → Internship-Ready
-
-> **How to use this notebook:** Read once for understanding, revise using Quick Revision sections, attempt all tasks in a lab environment. Every concept here is internship and interview relevant.
 
 ---
 
